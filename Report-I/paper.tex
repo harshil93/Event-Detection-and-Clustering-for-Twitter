@@ -1,0 +1,53 @@
+\documentclass[a4paper,twoside]{article}
+
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{calc}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{commath}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{pslatex}
+\usepackage{apalike}
+\usepackage{SCITEPRESS}
+\usepackage[small]{caption}
+
+\graphicspath{{./figures/}}
+
+\subfigtopskip=0pt
+\subfigcapskip=0pt
+\subfigbottomskip=0pt
+
+\newcommand{\SC}[1]{{\color{blue}SC: #1}}
+
+\title{BTP Title}
+
+\author{
+    \authorname{Shobhit Chaurasia\sup{1}, Harshil Lodhi\sup{1}, Nishant Yadav\sup{1} and Sanasam Ranbir Singh\sup{1}}
+    \affiliation{\sup{1}Indian Institute of Technology Guwahati}
+    \email{\{c.shobhit,harshil,nishant.yadav\}@iitg.ernet.in}
+}
+
+\begin{document}
+
+\keywords{Topic Models, LDA, Twitter}
+
+\include{abstract}
+
+\onecolumn \maketitle \normalsize \vfill
+
+\input{introduction}
+\input{problem}
+\input{work}
+
+\bibliographystyle{apalike}
+{\small \bibliography{paper}}
+
+\end{document}

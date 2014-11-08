@@ -6,7 +6,7 @@
 *.fls
 *.out
 *.toc
-
+paper.pdf
 ## Intermediate documents:
 *.dvi
 *-converted-to.*
