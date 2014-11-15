@@ -16,6 +16,13 @@ The inherent differences in the properties of each scheme can potentially lead t
 
 LDA as a model is unsupervised in nature. It does not need any labeled documents for the purpose of topic inferences. \cite{ramage2009labeled} have proposed Labeled LDA, a supervised version of the standard LDA, wherein a set of labels are provided as parameter to the model to be used as observed parameters for assigning topics to the documents. \cite{ramage2010characterizing} have explored the nature of Twitter messages and classified them into five different categories. Among these categories, the category of interest to us is the \emph{substance category}, which encompasses tweets about events, ideas, things, or people. They have used Labeled LDA to explore latent dimensions in Twitter posts, and further project these dimensions to the five categories. Further, to exploit the supervised learning aspect of Labeled LDA, they have used labels derived from hashtags, emoticons and Twitter meta-data like replies and temporal information to train the model. The combination of the latent features, and labeled features, and their projection to the \emph{substance category} could potentially lead to very accurate topic-to-event mapping which we are aiming to achieve.
 
+ \begin{figure*}
+ \centering
+ \includegraphics[width=0.6\textwidth]{figures/lda-algo}
+ \caption{Twitter LDA Generative Process}
+ \label{fig:twitterlda-algo}
+\end{figure*}
+
 Numerous research efforts have proposed approaches which are branches of the topic modeling paradigm, enhanced by use of other novel techniques and orthogonal ideas. \cite{wang2013real} have employed Gaussian mixture for choosing bursty words as potential candidates for being associated to an event. To further evaluate their candidacy, they have employed evolutionary clustering to model the temporal evolution of the candidate topics, before declaring them as being tightly-coupled to an event. They have proposed a time dependent HDP, which is an extension of a yet another powerful topic model - Hierarchical Dirichlet Process (HDP). Similarly, \cite{you2013geam} have come up with an Aspect Model called GEAM (General and Event-related Aspect Model) for extracting events information from noisy Twitter data.
 
 With so many model proposals in the literature for event detection based on Twitter data, our focus is to tune the proposed models to fit our requirements - detection of non-popular events. While many methods are agnostic to popularity or bursty nature of the events being detected, others directly or indirectly focus on trending events. Our aim is to come up with suitable modifications to these approaches to remove their inherent inclination towards popular events and topics.
