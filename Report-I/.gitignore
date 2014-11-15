@@ -7,6 +7,9 @@
 *.out
 *.toc
 ## Intermediate documents:
+paper.pdf
+cover.pdf
+certi.pdf
 *.dvi
 *-converted-to.*
 # these rules might exclude image files for figures etc.

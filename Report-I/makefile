@@ -6,7 +6,7 @@ cover.pdf: cover.tex
 certi.pdf: certi.tex
 	pdflatex certi
 
-paper.pdf: paper.tex cover.pdf certi.pdf work.tex abstract.tex problem.tex work.tex
+paper.pdf: paper.tex cover.pdf certi.pdf review.tex abstract.tex problem.tex introduction.tex ecosystem.tex twitterlda.tex
 	pdflatex paper
 	bibtex   paper
 	pdflatex paper
