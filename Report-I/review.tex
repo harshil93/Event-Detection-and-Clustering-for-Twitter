@@ -5,8 +5,8 @@ Topic modeling of the news-wire data has seen a lot of success. Topic modeling t
 
 Several attempts have been made to extend LDA to better capture topics in micro-blogs and tweets. \cite{hong2010empirical} have analyzed different tweet aggregation techniques for training the topic models, in particular, LDA and the Author-Topic (AT) model \cite{rosen2004author}. The AT model extends LDA by modeling each word in the document as being latently associated to a topic $z$ as well as an author $x$. An author $x$ is a multinomial ($\theta$) over topics, which in turn is a multinomial distribution ($\phi$) over the words $w$ of the vocabulary. Unlike LDA, where only the words are observed, in AT model, both words and authors are observed. Three schemes have been discussed for training the topic models.
 \begin{enumerate}
-\item {\bf MSG scheme:} The focus here is the tweet itself. LDA is trained on all the tweets. For training purposes, each tweet is considered individually as a document.\\
-\item {\bf USER scheme:} The focus here is the user. The model is not trained on individual tweets; rather, aggregation of all tweets of a particular user is fed to the model as a document.\\ 
+\item {\bf MSG scheme:} The focus here is the tweet itself. LDA is trained on all the tweets. For training purposes, each tweet is considered individually as a document.
+\item {\bf USER scheme:} The focus here is the user. The model is not trained on individual tweets; rather, aggregation of all tweets of a particular user is fed to the model as a document.
 \item {\bf TERM scheme:} This is a rather non-intuitive scheme, where tweets are aggregated based on the terms they contain. For each term, all the tweets containing that term are aggregated. Each document thus contains tweets that have a particular term in common.
 \end{enumerate}
 
