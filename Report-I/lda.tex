@@ -1,0 +1,16 @@
+\section{\uppercase{Latent Dirichlet Allocation}}
+Latent Dirichlet Allocation (LDA) is a probabilistic generative model which automatically and jointly clusters words into topics and documents into mixture of topics.
+
+LDA assumes that documents are a mixture of topics which give out words with certain probabilities. The generative process is defined below:
+
+1. Decide on the total number of words that a document will have, lets say $N$ and there are $M$ no. of documents.
+
+2. Choose  $\theta_i \, \sim \, \mathrm{Dir}(\alpha)$ , where  $i$ $\in$ $\{ 1,\dots,M \}$  and  $\mathrm{Dir}(\alpha)$  is the Dirichlet distribution for parameter $\alpha$
+
+3. Choose  $\phi_k \, \sim \, \mathrm{Dir}(\beta)$ , where  $k \in \{ 1,\dots,K \}$ 
+
+4. For each of the word positions $i, j,$ where  $j \in \{ 1,\dots,N_i \}$ , and  $i \in \{ 1,\dots,M \} $
+
+(a) Choose a topic $z_{i,j} \,\sim\, \mathrm{Multinomial}(\theta_i)$. 
+
+(b) Choose a word $w_{i,j} \,\sim\, \mathrm{Multinomial}( \phi_{z_{i,j}})$ .
