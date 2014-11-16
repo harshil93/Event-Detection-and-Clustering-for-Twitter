@@ -11,8 +11,8 @@ paper.pdf: paper.tex cover.pdf certi.pdf review.tex abstract.tex problem.tex int
 	bibtex   paper
 	pdflatex paper
 	pdflatex paper
-	evince paper.pdf &
-	make clean
+	evince paper.pdf
+	# make clean
 
 
 clean:
