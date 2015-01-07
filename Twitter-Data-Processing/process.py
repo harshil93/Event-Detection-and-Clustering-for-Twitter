@@ -36,5 +36,6 @@ def processCsv(filename):
 	for key,value in intvocabMap.iteritems():
 		fvoc.write(value+'\n')
 	fvoc.close()
+	f.close()
 
-processCsv("training.csv")
+processCsv("../../dataset/twitter_small/stopWordRemoved/training.csv.stopWordRemoved")
