@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="stanford-corenlp/ejml-0.23-src.zip"/>
+	<classpathentry kind="lib" path="stanford-corenlp/ejml-0.23.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/javax.json-api-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/javax.json.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/joda-time-2.1-sources.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/joda-time.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/jollyday-0.4.7-sources.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/jollyday.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/stanford-corenlp-3.5.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/stanford-corenlp-3.5.1-models.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/stanford-corenlp-3.5.1-sources.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/stanford-corenlp-3.5.1.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/xom-1.2.10-src.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp/xom.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
