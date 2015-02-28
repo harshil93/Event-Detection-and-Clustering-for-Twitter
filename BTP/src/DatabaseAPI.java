@@ -111,7 +111,7 @@ public class DatabaseAPI {
 			for (Integer id : ids) {
 				tweet = fetchTweet(id, true);
 				ans.add(tweet);
-
+			}
 			// STEP 6: Clean-up environment
 			rs.close();
 			stmt.close();
