@@ -4,7 +4,7 @@ import java.util.List;
 
 public class DatabaseAPI {
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	static final String DB_URL = "jdbc:mysql://localhost/twitter";
+	static final String DB_URL = "jdbc:mysql://localhost/twitter_test";
 
 	//  Database credentials
 	static final String USER = "root";
@@ -102,6 +102,48 @@ public class DatabaseAPI {
 			stmt = conn.createStatement();
 			String sql;
 			sql = "SELECT DISTINCT(tweetid) from hashtags";
+			ResultSet rs = stmt.executeQuery(sql);
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			// STEP 5: Extract data from result set
+			while (rs.next()) {
+				ids.add(rs.getInt("tweetid"));
+			}
+			for (Integer id : ids) {
+				tweet = fetchTweet(id, true);
+				ans.add(tweet);
+			}
+			// STEP 6: Clean-up environment
+			rs.close();
+			stmt.close();
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se2) {
+			}// nothing we can do
+		}// end try
+
+		return ans;
+	}
+	
+	public static ArrayList<Tweet> extractUntaggedTweets()
+	{
+//		establishConnection();
+		Statement stmt = null;
+		ArrayList<Tweet> ans = new ArrayList<Tweet>();
+		try {
+			Tweet tweet = new Tweet();
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT tweetid from tweets where tweetid NOT IN " +
+					"(SELECT DISTINCT(tweetid) from hashtags)";
 			ResultSet rs = stmt.executeQuery(sql);
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 			// STEP 5: Extract data from result set
