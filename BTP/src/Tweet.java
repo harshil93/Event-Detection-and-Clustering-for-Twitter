@@ -7,7 +7,7 @@ public class Tweet {
 	private Integer anon1;
 	private Integer anon2;
 //	private java.sql.Timestamp timestamp;
-	private String timestamp;
+	private String timestamp ;
 	private String label;
 	private String username;
 	private String tweet;
