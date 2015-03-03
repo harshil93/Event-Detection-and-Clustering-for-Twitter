@@ -1,9 +1,15 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,16 +21,20 @@ import java.util.regex.Pattern;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.util.StringUtils;
 
 
 // TODO - Implement Smily detection and remove it.
 public  class TweetCleaner {
 	private static Map<String, String> slangDict;
 	private static Set<String> stopWords;
+	private static String inTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/testdata.csv";
+	private static String outTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/testdata_clean.csv";
 	static{
 		// Filenames are important
 		String dictFile = "slangDict.txt";
 		String stopWordsFile = "stopWords.txt";
+		
 		
 		// Preparing the dictionary
 		try {
@@ -102,4 +112,40 @@ public  class TweetCleaner {
         return text;
     }
 	
+	public static void readTweetsFromFile(){
+		
+		BufferedReader r = null;
+		BufferedWriter w = null;	 
+		String line;
+		try {
+			r = new BufferedReader(new FileReader(inTweetsFile));
+			w = new BufferedWriter(new FileWriter(outTweetsFile));
+			while ((line = r.readLine()) != null) {
+				String[] tokens = line.split(",");
+				tokens[5] = clean(tokens[5]);
+				w.write(StringUtils.join(tokens, ","));
+				w.newLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Error in File I/O");
+		} finally {
+			try {
+				r.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				w.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		readTweetsFromFile();
+	}
 }

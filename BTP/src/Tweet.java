@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
+// TODO - convert timestamp to timestamp data type
+// TODO - insert tweet in DB with legitimate timestamp format
 public class Tweet {
 	private Integer tweetID;
 	private Integer anon1;
