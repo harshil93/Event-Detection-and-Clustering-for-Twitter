@@ -46,10 +46,10 @@ public class HashTagLabeller {
 			String[] tokens = line.split("\\s+");
 			assert(curTopic == null);
 			curTopic.words.put(tokens[0], Double.parseDouble(tokens[1]));
-			curTopic.list.add(new TopicWord(){{
-				word = tokens[0];
-				val = Double.parseDouble(tokens[1]);
-			}});
+//			curTopic.list.add(new TopicWord(){{
+//				word = tokens[0];
+//				val = Double.parseDouble(tokens[1]);
+//			}});
 		}
 		topics.add(curTopic);
 		

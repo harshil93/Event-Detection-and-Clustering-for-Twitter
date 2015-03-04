@@ -52,7 +52,7 @@ public class Tweet {
 		return tweet;
 	}
 	public void setTweet(String tweet) {
-		this.tweet = tweet;
+		this.tweet = tweet.toLowerCase();
 	}
 	public Integer getTweetID() {
 		return tweetID;

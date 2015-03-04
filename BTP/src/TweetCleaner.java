@@ -1,15 +1,9 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,18 +12,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.process.CoreLabelTokenFactory;
-import edu.stanford.nlp.process.PTBTokenizer;
-import edu.stanford.nlp.util.StringUtils;
 
 
 // TODO - Implement Smily detection and remove it.
+// TODO - What to do with punctuations?
 public  class TweetCleaner {
 	private static Map<String, String> slangDict;
 	private static Set<String> stopWords;
-	private static String inTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/testdata.csv";
-	private static String outTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/testdata_clean.csv";
+	private static String inTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/in.txt";
+	private static String outTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/out.txt";
 	static{
 		// Filenames are important
 		String dictFile = "slangDict.txt";
@@ -91,7 +82,7 @@ public  class TweetCleaner {
 	}
 	
 	public static String clean(String tw){
-		String tweet = removeUrl(tw);
+		String tweet = removeUrl(tw).toLowerCase();
 		List<String> newToks = Twokenize.tokenizeRawTweetText(tweet);
 		replaceSlangs(newToks);
 		newToks = removeStopWords(newToks);
@@ -121,9 +112,10 @@ public  class TweetCleaner {
 			r = new BufferedReader(new FileReader(inTweetsFile));
 			w = new BufferedWriter(new FileWriter(outTweetsFile));
 			while ((line = r.readLine()) != null) {
-				String[] tokens = line.split(",");
-				tokens[5] = clean(tokens[5]);
-				w.write(StringUtils.join(tokens, ","));
+//				String[] tokens = line.split(",");
+//				tokens[5] = clean(tokens[5]);
+				line = clean(line);
+				w.write(line);
 				w.newLine();
 			}
 		} catch (IOException e) {
