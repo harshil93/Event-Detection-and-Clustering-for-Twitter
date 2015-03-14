@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AutoHashTag {
+public class AutoHashTag_TF {
 	private static double threshold = 0.3;
 
 //	private class Pair {
@@ -103,7 +103,7 @@ public class AutoHashTag {
 
 	public static void main(String[] args) {
 		DatabaseAPI.establishConnection();
-		HashMap<Integer, HashSet<String>> newTags = AutoHashTag.genTags();
+		HashMap<Integer, HashSet<String>> newTags = AutoHashTag_TF.genTags();
 		for (Entry<Integer,HashSet<String>> e : newTags.entrySet()) {
 			System.out.print(e.getKey()+":");
 			for (String s : e.getValue()) {
