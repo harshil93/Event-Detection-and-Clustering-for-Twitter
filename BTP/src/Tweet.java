@@ -13,7 +13,7 @@ public class Tweet {
 	private String username;
 	private String tweet;
 	private ArrayList<String> hashtags;
-	
+		
 	Tweet()
 	{
 		hashtags = new ArrayList<String>();
