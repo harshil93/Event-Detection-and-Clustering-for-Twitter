@@ -7168,8 +7168,6 @@ piw
 Parent is watching
 pix  
 pictures
-pk  
-player kill
 pkemon  
 pokemon
 pker  
