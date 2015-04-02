@@ -16,11 +16,11 @@ import Common.Stopwords;
 
 public class tweet {
 
-	protected int time;
+	protected long time;
 
 	protected int[] tweetwords;
 
-	public tweet(String dataline, HashMap<String, Integer> wordMap,
+	public tweet(String id, String dataline, HashMap<String, Integer> wordMap,
 			ArrayList<String> uniWordMap) {
 
 		int number = wordMap.size();
@@ -50,7 +50,7 @@ public class tweet {
 		}
 
 		tweetwords = new int[words.size()];
-
+		time = Long.parseLong(id);
 		for (int w = 0; w < words.size(); w++) {
 			tweetwords[w] = words.get(w);
 		}

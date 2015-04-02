@@ -1,10 +1,15 @@
- import java.sql.*;
+ import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseAPI {
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	static final String DB_URL = "jdbc:mysql://localhost/twitter_test";
+	static final String DB_URL = "jdbc:mysql://localhost/twitter";
 
 	//  Database credentials
 	static final String USER = "root";
@@ -50,17 +55,17 @@ public class DatabaseAPI {
 		try {
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT * FROM tweets where tweetID="+tweetID;
+			sql = "SELECT * FROM tweets_clean where tweetID="+tweetID;
 			ResultSet rs = stmt.executeQuery(sql);
 			// STEP 5: Extract data from result set
 			while (rs.next()) {
 				// Retrieve by column name
 				tweet.setTweetID(rs.getInt("tweetid"));
-				tweet.setAnon1(rs.getInt("anon1"));
-				tweet.setAnon2(rs.getInt("anon2"));
-				tweet.setTimestamp(rs.getString("timestamp"));
-				tweet.setLabel(rs.getString("label"));
-				tweet.setUsername(rs.getString("username"));
+//				tweet.setAnon1(rs.getInt("anon1"));
+//				tweet.setAnon2(rs.getInt("anon2"));
+//				tweet.setTimestamp(rs.getTimestamp("timestamp"));
+//				tweet.setLabel(rs.getString("label"));
+//				tweet.setUsername(rs.getString("username"));
 				tweet.setTweet(rs.getString("tweet"));					
 				}
 			if (hasht) {
@@ -142,7 +147,7 @@ public class DatabaseAPI {
 			Tweet tweet = new Tweet();
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT tweetid from tweets where tweetid NOT IN " +
+			sql = "SELECT tweetid from tweets_clean where tweetid NOT IN " +
 					"(SELECT DISTINCT(tweetid) from hashtags)";
 			ResultSet rs = stmt.executeQuery(sql);
 			ArrayList<Integer> ids = new ArrayList<Integer>();
@@ -179,10 +184,27 @@ public class DatabaseAPI {
 	{
 		establishConnection();
 		Tweet tweet = new Tweet();
-		tweet = fetchTweet(1, false);
-		ArrayList<Tweet> taggedTweets = new ArrayList<Tweet>();
-		taggedTweets = extractTaggedTweets();
-		System.out.println(tweet.getTweet());
+//		tweet = fetchTweet(1, false);
+		ArrayList<Tweet> untaggedTweets = new ArrayList<Tweet>();
+		untaggedTweets = extractUntaggedTweets();
+		BufferedWriter w = null;
+		try {
+			w = new BufferedWriter(new FileWriter("out"));
+			for (Tweet t : untaggedTweets) {
+				w.write(t.getTweetID()+"\t"+t.getTweet());
+				w.newLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Error in File I/O");
+		} finally {
+			try {
+				w.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	   	
 }

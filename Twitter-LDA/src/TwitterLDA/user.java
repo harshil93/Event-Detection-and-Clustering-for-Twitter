@@ -30,8 +30,11 @@ public class user {
 		
 		for(int lineNo = 0; lineNo < datalines.size(); lineNo++) {
 			String line = datalines.get(lineNo);
-			tweet tw = new tweet(line, wordMap, uniWordMap);
-			tweets.add(tw);						
+			String[] tweetSplit = line.split("\t");
+			if(tweetSplit.length==2) {
+				tweet tw = new tweet(tweetSplit[0], tweetSplit[1], wordMap, uniWordMap);
+			tweets.add(tw);
+			}
 		}
 		
 		datalines.clear();

@@ -96,7 +96,54 @@ def generateAggregatedTweetsFilesFromHashTags(filename):
 			f.close()
 		except Exception, e:
 			continue
+
+def generateAggregatedTweetsFilesFromHashTags_id(filename):
+	f = open(filename,'rb')
+	tok = twitterTokenizer.Tokenizer(preserve_case=False)
+	# reader = csv.reader(f)
+	hashtags_tweets = {}
+	hashtags_tweets['no$hashtag'] = []
+	remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+	num = 0
+	for line in f:
+		if line=="\n":
+			continue
+		# print num
+		# num = num + 1
+		# if(num%10000==0):
+		# print num
+		# print line
+		tw = line.split('\t')
+		if len(tw)!=2:
+			continue
+		tweet = tw[1]
+		hashtags = extract_hash_tags(tweet)
+		tokenized = [s.translate(remove_punctuation_map) for s in tok.tokenize(tweet)]
+		tokenized = [s for s in tokenized if s]
+		tokenized_tweet = ' '.join(tokenized)
+		if len(tokenized)==0:
+			continue
+			pass
+		new_tweet = tw[0] + "\t" + tokenized_tweet
+		# print new_tweet
+		if len(hashtags) == 0:
+			hashtags_tweets['no$hashtag'].append(new_tweet)
+		else:
+			for hashtag in hashtags:
+				if hashtag not in hashtags_tweets:
+					hashtags_tweets[hashtag] = []
+				hashtags_tweets[hashtag].append(new_tweet)
 		
-generateAggregatedTweetsFilesFromHashTags('./Dataset/training.csv')
+	for topic in hashtags_tweets:
+		try:
+			f2 = open('./AggregatedByTopic/'+ safeFileName(topic)+'.txt','w')
+			for tweet in hashtags_tweets[topic]:
+				f2.write(tweet)
+				f2.write('\n')
+			f2.close()
+		except Exception, e:
+			continue
+	f.close()
+generateAggregatedTweetsFilesFromHashTags_id('../../dataset/twitter_small/original/out_id_clean')
 #generateAggregatedTweetsFiles('./Dataset/testdata.csv')
 # processCsv("../../dataset/twitter_small/stopWordRemoved/training.csv.stopWordRemoved")

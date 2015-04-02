@@ -21,11 +21,14 @@ public  class TweetCleaner {
 	private static Set<String> stopWords;
 	private static String inTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/in.txt";
 	private static String outTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/out.txt";
+	static Pattern p;
 	static{
 		// Filenames are important
 		String dictFile = "slangDict.txt";
 		String stopWordsFile = "stopWords.txt";
 		
+		String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+        p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
 		
 		// Preparing the dictionary
 		try {
@@ -92,12 +95,12 @@ public  class TweetCleaner {
 	
 	public static String removeUrl(String text)
     {
-        String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
-        Pattern p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
+//        String urlPattern = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+//        Pattern p = Pattern.compile(urlPattern,Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(text);
         int i = 0;
         while (m.find()) {
-            text = text.replaceAll(m.group(i),"").trim();
+            text = text.replaceAll(Pattern.quote(m.group(i)),"").trim();
             i++;
         }
         return text;

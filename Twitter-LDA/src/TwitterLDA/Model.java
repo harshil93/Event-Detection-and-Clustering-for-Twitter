@@ -844,7 +844,7 @@ public class Model {
 			// outlines.add(buffer_user.userID + " " + buffer_user.tweetCnt);
 			for (int d = 0; d < buffer_user.tweetCnt; d++) {
 				tweet buffer_tweet = buffer_user.tweets.get(d);
-				String line = "z=" + z[u][d] + ":  ";
+				String line = "z=" + z[u][d] + "\t";
 				for (int n = 0; n < buffer_tweet.tweetwords.length; n++) {
 					int word = buffer_tweet.tweetwords[n];
 					if (x[u][d][n] == true) {
@@ -853,28 +853,29 @@ public class Model {
 						line += uniWordMap.get(word) + "/" + "false" + " ";
 					}
 				}
-				int buffertime = buffer_tweet.time + 1;
-				if (buffertime <= 30) {
-					if (buffertime < 10) {
-						line = "2011-09-0" + buffertime + ":\t" + line;
-					} else {
-						line = "2011-09-" + buffertime + ":\t" + line;
-					}
-				} else if (buffertime <= 61 && buffertime > 30) {
-					int buffer_time = buffertime - 30;
-					if (buffertime - 30 < 10) {
-						line = "2011-10-0" + buffer_time + ":\t" + line;
-					} else {
-						line = "2011-10-" + buffer_time + ":\t" + line;
-					}
-				} else if (buffertime > 61) {
-					int buffer_time = buffertime - 61;
-					if (buffertime - 61 < 10) {
-						line = "2011-11-0" + buffer_time + ":\t" + line;
-					} else {
-						line = "2011-11-" + buffer_time + ":\t" + line;
-					}
-				}
+//				Integer buffertime = ;
+				line = String.valueOf(buffer_tweet.time) + "\t" + line;
+//				if (buffertime <= 30) {
+//					if (buffertime < 10) {
+//						line = "2011-09-0" + buffertime + ":\t" + line;
+//					} else {
+//						line = "2011-09-" + buffertime + ":\t" + line;
+//					}
+//				} else if (buffertime <= 61 && buffertime > 30) {
+//					int buffer_time = buffertime - 30;
+//					if (buffertime - 30 < 10) {
+//						line = "2011-10-0" + buffer_time + ":\t" + line;
+//					} else {
+//						line = "2011-10-" + buffer_time + ":\t" + line;
+//					}
+//				} else if (buffertime > 61) {
+//					int buffer_time = buffertime - 61;
+//					if (buffertime - 61 < 10) {
+//						line = "2011-11-0" + buffer_time + ":\t" + line;
+//					} else {
+//						line = "2011-11-" + buffer_time + ":\t" + line;
+//					}
+//				}
 				// outlines.add(line);
 				writer.write(line + "\n");
 			}
@@ -886,53 +887,53 @@ public class Model {
 		// outlines.clear();
 	}
 
-	public void outputTextWithLabel_old(String output, ArrayList<user> users,
-			ArrayList<String> uniWordMap) {
-		ArrayList<String> outlines = new ArrayList<String>();
-
-		for (int u = 0; u < users.size(); u++) {
-			user buffer_user = users.get(u);
-			outlines.add(buffer_user.userID + " " + buffer_user.tweetCnt);
-			for (int d = 0; d < buffer_user.tweetCnt; d++) {
-				tweet buffer_tweet = buffer_user.tweets.get(d);
-				String line = "z=" + z[u][d] + ":  ";
-				for (int n = 0; n < buffer_tweet.tweetwords.length; n++) {
-					int word = buffer_tweet.tweetwords[n];
-					if (x[u][d][n] == true) {
-						line += uniWordMap.get(word) + "/" + z[u][d] + " ";
-					} else {
-						line += uniWordMap.get(word) + "/" + "false" + " ";
-					}
-				}
-				int buffertime = buffer_tweet.time + 1;
-				if (buffertime <= 30) {
-					if (buffertime < 10) {
-						line = "2011-09-0" + buffertime + ":\t" + line;
-					} else {
-						line = "2011-09-" + buffertime + ":\t" + line;
-					}
-				} else if (buffertime <= 61 && buffertime > 30) {
-					int buffer_time = buffertime - 30;
-					if (buffertime - 30 < 10) {
-						line = "2011-10-0" + buffer_time + ":\t" + line;
-					} else {
-						line = "2011-10-" + buffer_time + ":\t" + line;
-					}
-				} else if (buffertime > 61) {
-					int buffer_time = buffertime - 61;
-					if (buffertime - 61 < 10) {
-						line = "2011-11-0" + buffer_time + ":\t" + line;
-					} else {
-						line = "2011-11-" + buffer_time + ":\t" + line;
-					}
-				}
-				outlines.add(line);
-			}
-		}
-
-		FileUtil.writeLines(output, outlines);
-		outlines.clear();
-	}
+//	public void outputTextWithLabel_old(String output, ArrayList<user> users,
+//			ArrayList<String> uniWordMap) {
+//		ArrayList<String> outlines = new ArrayList<String>();
+//
+//		for (int u = 0; u < users.size(); u++) {
+//			user buffer_user = users.get(u);
+//			outlines.add(buffer_user.userID + " " + buffer_user.tweetCnt);
+//			for (int d = 0; d < buffer_user.tweetCnt; d++) {
+//				tweet buffer_tweet = buffer_user.tweets.get(d);
+//				String line = "z=" + z[u][d] + ":  ";
+//				for (int n = 0; n < buffer_tweet.tweetwords.length; n++) {
+//					int word = buffer_tweet.tweetwords[n];
+//					if (x[u][d][n] == true) {
+//						line += uniWordMap.get(word) + "/" + z[u][d] + " ";
+//					} else {
+//						line += uniWordMap.get(word) + "/" + "false" + " ";
+//					}
+//				}
+//				int buffertime = buffer_tweet.time + 1;
+//				if (buffertime <= 30) {
+//					if (buffertime < 10) {
+//						line = "2011-09-0" + buffertime + ":\t" + line;
+//					} else {
+//						line = "2011-09-" + buffertime + ":\t" + line;
+//					}
+//				} else if (buffertime <= 61 && buffertime > 30) {
+//					int buffer_time = buffertime - 30;
+//					if (buffertime - 30 < 10) {
+//						line = "2011-10-0" + buffer_time + ":\t" + line;
+//					} else {
+//						line = "2011-10-" + buffer_time + ":\t" + line;
+//					}
+//				} else if (buffertime > 61) {
+//					int buffer_time = buffertime - 61;
+//					if (buffertime - 61 < 10) {
+//						line = "2011-11-0" + buffer_time + ":\t" + line;
+//					} else {
+//						line = "2011-11-" + buffer_time + ":\t" + line;
+//					}
+//				}
+//				outlines.add(line);
+//			}
+//		}
+//
+//		FileUtil.writeLines(output, outlines);
+//		outlines.clear();
+//	}
 
 	// public void outputTopicCountOnTime(String output){
 	//

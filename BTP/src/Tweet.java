@@ -7,8 +7,8 @@ public class Tweet {
 	private Integer tweetID;
 	private Integer anon1;
 	private Integer anon2;
-//	private java.sql.Timestamp timestamp;
-	private String timestamp ;
+	private java.sql.Timestamp timestamp;
+//	private String timestamp ;
 	private String label;
 	private String username;
 	private String tweet;
@@ -30,10 +30,10 @@ public class Tweet {
 	public void setAnon2(Integer anon2) {
 		this.anon2 = anon2;
 	}
-	public String getTimestamp() {
+	public java.sql.Timestamp getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(java.sql.Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 	public String getLabel() {
