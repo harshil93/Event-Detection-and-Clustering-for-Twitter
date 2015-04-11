@@ -13,7 +13,20 @@ public class Tweet {
 	private String username;
 	private String tweet;
 	private ArrayList<String> hashtags;
-		
+	private ArrayList<String> entities;
+	private String assignedTopic;
+	public String getAssignedTopic() {
+		return assignedTopic;
+	}
+	public void setAssignedTopic(String assignedTopic) {
+		this.assignedTopic = assignedTopic;
+	}
+	public ArrayList<String> getEntities() {
+		return entities;
+	}
+	public void setEntities(ArrayList<String> entities) {
+		this.entities = entities;
+	}
 	Tweet()
 	{
 		hashtags = new ArrayList<String>();

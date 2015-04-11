@@ -13,7 +13,7 @@ public class DatabaseAPI {
 
 	//  Database credentials
 	static final String USER = "root";
-	static final String PASS = "root";
+	static final String PASS = "peace";
 	static private Connection conn;
 	
 	public static void establishConnection() {

@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,100 +13,159 @@ import org.json.simple.*;
 // TODO - use location dictionary as well for location extractions http://www.geonames.org/about.html
 // TODO - see if extracting Nouns etc is necessary in addition Entities
 public class Testing {
-	public final static String inFile = "/home/shobhit/in";
-	public final static String outFile_geoLoc = "/home/shobhit/out_geoLoc";
-	public final static String outFile_entities = "/home/shobhit/out_entities";
 	
-	public static void main(String[] args){
+	// Change this a/c to your requirements
+	public final static String _nerInFile = "./TweetByTopic_Test/tweetsForNER.out";
+	public final static int _numOfTopic = 3;
+	public final static String _tweetsFile= "./TweetByTopic_Test/tweets";
+	public final static String _topicFolder = "./TweetByTopic_Test/";
+	
+	public final static String _LLDAidfilePrefix = "LLDA.id.";
+	public final static String _LLDAwordfilePrefix = "LLDA.word.";
+	public final static String _LLDAentityfilePrefix = "LLDA.entity.";
+	static Map<Integer, Tweet> tweets = new HashMap<Integer, Tweet>();
+	static ArrayList< ArrayList<Integer> > topics = new ArrayList<ArrayList<Integer>>();
+	public static void main(String[] args) throws IOException{
 		
-//		readTweet(System.in);
-		process();
+		readFiles(_nerInFile,_tweetsFile,_topicFolder,_numOfTopic);
+		createFileForLabelledLDA(_LLDAidfilePrefix,_LLDAwordfilePrefix, _LLDAentityfilePrefix);
 		
-//		List<String> tweets = new ArrayList<String>();
-//		tweets.add("I am going to #IITG tomorrow/today zup :) http://imgur.com");
-//		tweets.add("I am going to IITG day after tomorrow");
-//		
-//		System.out.println(TweetCleaner.clean(tweets.get(0)));
-		
-		
-//		DatabaseAPI.establishConnection();
-//		ArrayList<Tweet> tweets = new ArrayList<Tweet>();
-//		tweets = DatabaseAPI.extractUntaggedTweets();
-//		
-//		// for each tweet remove URL, tokenize the text and replace slangs
-//		for (Tweet tw : tweets) {
-//			String tweet = TweetCleaner.removeUrl(tw.getTweet());
-//			List<String> newToks = Twokenize.tokenizeRawTweetText(tweet);
-//			TweetCleaner.replaceSlangs(newToks);
-//			tweet = String.join(" ", newToks);
-//			tw.setTweet(tweet);
-//		}
-//		
-//		// before removing stopwords, we should first run twitter_nlp to extract
-//		// location mentions and other named entities. 
-//		
-//		
-//		// remove stopwords from tweets
-//		for (Tweet tw : tweets) {
-//			String tweet = TweetCleaner.removeUrl(tw.getTweet());
-//			List<String> newToks = Twokenize.tokenizeRawTweetText(tweet);
-//			newToks = TweetCleaner.removeStopWords(newToks);
-//			tweet = String.join(" ", newToks);
-//			tw.setTweet(tweet);
-//		}
-//		ArrayList<ArrayList<Tweet>> m = Timeline.partition(tweets,1);
 		
 	}
 	
+	private static void createFileForLabelledLDA(String lldaidfileprefix,String lldawordfileprefix,String lldaentityfileprefix) throws IOException {
+		
+		for(int topicNum = 0; topicNum< topics.size();topicNum++){
+			
+			HashMap<String,ArrayList<Integer>> entityWiseTweets = new HashMap<String, ArrayList<Integer>>();
+			ArrayList<Integer> topic  = topics.get(topicNum);
+			File file = new File(_topicFolder+lldaidfileprefix+topicNum);
+            BufferedWriter idWriter = new BufferedWriter(new FileWriter(file));
+            
+            
+            File file1 = new File(_topicFolder+lldaentityfileprefix+topicNum);
+            BufferedWriter entityIntWriter = new BufferedWriter(new FileWriter(file1));
+            
+            File file2 = new File(_topicFolder+lldawordfileprefix+topicNum);
+            BufferedWriter wordWriter = new BufferedWriter(new FileWriter(file2));
+            
+			for (int i = 0; i < topic.size(); i++) {
+				Tweet tw = tweets.get(topic.get(i));
+				ArrayList<String> entities = tw.getEntities();
+				
+				for (int j = 0; j < entities.size(); j++) {
+					String currentEntity = entities.get(j);
+					
+					if(entityWiseTweets.containsKey(currentEntity)){
+						entityWiseTweets.get(currentEntity).add(tw.getTweetID());
+					}else{
+						entityWiseTweets.put(currentEntity,new ArrayList<Integer>());
+						entityWiseTweets.get(currentEntity).add(tw.getTweetID());
+					}
+				}
+			}
+			int entityNum = 0;
+			
+			for (Map.Entry<String, ArrayList<Integer>> entry : entityWiseTweets.entrySet()) {
+			    String key = entry.getKey();
+			    ArrayList<Integer> value = entry.getValue();
+			    
+			    try {
+			    	
+			    	entityIntWriter.write(entityNum+" "+key);
+		            idWriter.write("["+entityNum+"] ");
+		            wordWriter.write("["+entityNum+"] ");
+		            
+		            for (int i = 0; i < value.size(); i++) {
+		            	idWriter.write(value.get(i)+" ");
+		            	wordWriter.write(tweets.get(value.get(i)).getTweet()+" ");
+					}
+		           
+		        } catch ( IOException e ) {
+		            e.printStackTrace();
+		        }
+			    
+			    entityNum++;
+			}
+			 idWriter.close();
+			 entityIntWriter.close();
+			 wordWriter.close();
+		}
+	}
+
 	private static JSONArray getJSONArray(String s){
 		Object Obj=JSONValue.parse(s);
 		JSONArray arr=(JSONArray)Obj;
 		return arr;
 	}
 	
-	// read tweets+tag lists from file, write entities+geoLocs to file
-	public static void process() {
-		BufferedReader r = null;
-		BufferedWriter w1 = null;	
-		BufferedWriter w2 = null;
-		String tweet;
-		ArrayList<String> geoLoc = new ArrayList<String>();
-		ArrayList<String> entities = new ArrayList<String>();
+	
+	public static void readFiles(String nerInFile, String tweetsfile, String topicFolder, int numoftopic) throws FileNotFoundException {
+		BufferedReader nerReader = new BufferedReader(new FileReader(nerInFile));
+		BufferedReader tweetsReader = new BufferedReader(new FileReader(tweetsfile));
+		
+		
+		
+		String line;
 		try {
-			r = new BufferedReader(new FileReader(inFile));
-			w1 = new BufferedWriter(new FileWriter(outFile_geoLoc));
-			w2 = new BufferedWriter(new FileWriter(outFile_entities));
-			while ((tweet = r.readLine()) != null) {
-				String tags = r.readLine();
-				String pos = r.readLine();
-				String events = r.readLine();
-				
-				geoLoc = NER.extractEntities(getJSONArray(tweet), getJSONArray(tags));
-				entities = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
-				
-				for (String e : geoLoc) {
-					w1.write(e.toLowerCase()+";");
+			// read tweetsfile
+			while((line = tweetsReader.readLine()) !=null){
+				String[] tweetArr = line.split("\t");
+				if(tweetArr.length>1){
+					String tweet="";
+					for(int i = 1;i<tweetArr.length;i++){
+						tweet += tweetArr[i]+" ";
+					}
+					
+					
+					Integer tweetId = Integer.parseInt(tweetArr[0]);
+					
+					Tweet tweetObj = new Tweet();
+					tweetObj.setTweetID(tweetId);
+					tweetObj.setTweet(tweet);
+					
+					tweets.put(tweetId, tweetObj);
 				}
-				w1.newLine();
-				
-				for (String e : entities) {
-					w2.write(e.toLowerCase()+";");
-				}
-				w2.newLine();
 			}
-		} catch (IOException e) {
+			
+			// read tweetsfile
+			String id;
+			while((id = nerReader.readLine()) !=null){
+				
+				Integer tweetId = Integer.parseInt(id);
+				String tweet = nerReader.readLine();
+				String tags = nerReader.readLine();
+				String pos = nerReader.readLine();
+				String events = nerReader.readLine();
+				Tweet tw = tweets.get(tweetId);
+				
+				ArrayList<String> arr1 = NER.extractEntities(getJSONArray(tweet), getJSONArray(tags));
+				ArrayList<String> arr2 = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
+				arr1.addAll(arr2);
+				
+				tw.setEntities(arr1);	
+			}
+			for(int topicNum = 0; topicNum< numoftopic;topicNum++){
+				topics.add(new ArrayList<Integer>());
+			}
+			
+			for(int topicNum = 0; topicNum< numoftopic;topicNum++){
+				BufferedReader topicReader = new BufferedReader(new FileReader(topicFolder+topicNum));
+				while((id = topicReader.readLine())!=null){
+					topics.get(topicNum).add(Integer.parseInt(id));
+				}
+			}
+			
+			
+			
+			nerReader.close();
+			tweetsReader.close();
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Error in File I/O");
-		} finally {
-			try {
-				r.close();
-				w1.close();
-				w2.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
+		
+		
 	}
 	
 	

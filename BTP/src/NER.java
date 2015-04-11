@@ -26,8 +26,8 @@ public class NER {
 			e.printStackTrace();
 		}
 	}
-	public static ArrayList<String> extractLocations(JSONArray tweet,JSONArray tags){
-			
+	
+	public static ArrayList<String> extractLocations(JSONArray tweet,JSONArray tags){		
 			HashSet<String> locs = new HashSet<String>();
 			
 			for (int i = 0; i < tweet.size(); i++) {
@@ -44,7 +44,9 @@ public class NER {
 						}
 					}
 					locs.add(location.toLowerCase());
+					continue;
 				}
+				
 				if(geolist.contains(tweet.get(i).toString().toLowerCase())){
 					locs.add(tweet.get(i).toString().toLowerCase());
 				}
@@ -52,6 +54,7 @@ public class NER {
 						
 			return new ArrayList<String>(locs);
 		}
+	
 	public static ArrayList<String> extractEntities(JSONArray tweet,JSONArray tags){
 		ArrayList<String> entities= new ArrayList<String>();
 		for (int i = 0; i < tweet.size(); i++) {
