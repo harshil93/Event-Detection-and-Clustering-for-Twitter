@@ -12,8 +12,8 @@ import org.json.simple.*;
 // TODO - see if extracting Nouns etc is necessary in addition Entities
 public class Testing {
 	public final static String inFile = "/home/shobhit/in";
-	public final static String outFile_geoLoc = "/home/shobhit/out_geoLoc";
-	public final static String outFile_entities = "/home/shobhit/out_entities";
+	public final static String outFile_geoLoc = "/home/shobhit/out_geoLoc.csv";
+	public final static String outFile_entities = "/home/shobhit/out_entities.csv";
 	
 	public static void main(String[] args){
 		
@@ -55,7 +55,7 @@ public class Testing {
 //		ArrayList<ArrayList<Tweet>> m = Timeline.partition(tweets,1);
 		
 	}
-	
+
 	private static JSONArray getJSONArray(String s){
 		Object Obj=JSONValue.parse(s);
 		JSONArray arr=(JSONArray)Obj;
@@ -67,14 +67,17 @@ public class Testing {
 		BufferedReader r = null;
 		BufferedWriter w1 = null;	
 		BufferedWriter w2 = null;
-		String tweet;
+//		String tweet;
+		String sid;
 		ArrayList<String> geoLoc = new ArrayList<String>();
 		ArrayList<String> entities = new ArrayList<String>();
 		try {
 			r = new BufferedReader(new FileReader(inFile));
 			w1 = new BufferedWriter(new FileWriter(outFile_geoLoc));
 			w2 = new BufferedWriter(new FileWriter(outFile_entities));
-			while ((tweet = r.readLine()) != null) {
+			while ((sid = r.readLine()) != null) {
+				String tweet = r.readLine();
+//				int id = Integer.parseInt(sid);
 				String tags = r.readLine();
 				String pos = r.readLine();
 				String events = r.readLine();
@@ -82,15 +85,22 @@ public class Testing {
 				geoLoc = NER.extractEntities(getJSONArray(tweet), getJSONArray(tags));
 				entities = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
 				
-				for (String e : geoLoc) {
-					w1.write(e.toLowerCase()+";");
+				if(geoLoc.size()>=1 || entities.size()>=1)
+				{
+					w2.write(sid);
+//					w2.newLine();
+					for (String e : geoLoc) {
+						w2.write(",\""+e.toLowerCase()+"\"");
+					}
+//					w1.newLine();
+					
+					for (String e : entities) {
+						w2.write(",\""+e.toLowerCase()+"\"");
+					}
+					w2.newLine();
 				}
-				w1.newLine();
 				
-				for (String e : entities) {
-					w2.write(e.toLowerCase()+";");
-				}
-				w2.newLine();
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

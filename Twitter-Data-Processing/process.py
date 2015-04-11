@@ -97,6 +97,28 @@ def generateAggregatedTweetsFilesFromHashTags(filename):
 		except Exception, e:
 			continue
 
+# infolder is the path of the folder which has output of Twitter LDA
+# filelist is the file that contains the names of files in the above folder
+#  outfolder is the path of the folder to which new files will be written
+def groupTweetsByTopicTwitterLDA(infolder, outfolder, filelist, noOfTopics):
+	x = [[] for i in range(noOfTopics)]
+	fl =  open(filelist,'rb')
+	for file in fl:
+		f = open(infolder+"/"+file.rstrip(),'rb')
+		for line in f:
+			tokens = line.split('\t')
+			x[int(tokens[1].split('=')[1])].append(tokens[0]);
+		f.close()
+	fl.close()
+	print "done"
+	for i in range(noOfTopics):
+		f = open(outfolder+"/"+str(i),'wb')
+		for id in x[i]:
+			f.write(id)
+			f.write('\n')
+		f.close()
+
+
 def generateAggregatedTweetsFilesFromHashTags_id(filename):
 	f = open(filename,'rb')
 	tok = twitterTokenizer.Tokenizer(preserve_case=False)
@@ -144,6 +166,7 @@ def generateAggregatedTweetsFilesFromHashTags_id(filename):
 		except Exception, e:
 			continue
 	f.close()
-generateAggregatedTweetsFilesFromHashTags_id('../../dataset/twitter_small/original/out_id_clean')
+groupTweetsByTopicTwitterLDA("/home/shobhit/btp/results/TwitterLDA_50/TextWithLabel", "./TweetByTopics_50", "filelist", 50)
+# generateAggregatedTweetsFilesFromHashTags_id('../../dataset/twitter_small/original/out_id_clean')
 #generateAggregatedTweetsFiles('./Dataset/testdata.csv')
 # processCsv("../../dataset/twitter_small/stopWordRemoved/training.csv.stopWordRemoved")

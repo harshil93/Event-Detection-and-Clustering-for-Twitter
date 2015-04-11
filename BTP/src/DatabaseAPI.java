@@ -55,7 +55,7 @@ public class DatabaseAPI {
 		try {
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT * FROM tweets_clean where tweetID="+tweetID;
+			sql = "SELECT * FROM tweets where tweetID="+tweetID;
 			ResultSet rs = stmt.executeQuery(sql);
 			// STEP 5: Extract data from result set
 			while (rs.next()) {
@@ -147,7 +147,7 @@ public class DatabaseAPI {
 			Tweet tweet = new Tweet();
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT tweetid from tweets_clean where tweetid NOT IN " +
+			sql = "SELECT tweetid from tweets where tweetid NOT IN " +
 					"(SELECT DISTINCT(tweetid) from hashtags)";
 			ResultSet rs = stmt.executeQuery(sql);
 			ArrayList<Integer> ids = new ArrayList<Integer>();

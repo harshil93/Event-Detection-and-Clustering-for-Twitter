@@ -1,4 +1,6 @@
 *.pyc
+/Twitter-Data-Processing/AggregatedByTopic
+/Twitter-Data-Processing/TweetByTopics
 freq.txt
 *.class
 
