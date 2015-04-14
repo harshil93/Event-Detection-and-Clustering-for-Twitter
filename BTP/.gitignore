@@ -11,6 +11,6 @@ hs_err_pid*
 geolist.txt
 TweetByTopics_25/*
 TweetByTopics_50/*
-TweetByTopic_Test/*
+TweetByTopics_Test/*
 twitter_bakcup.sql
 bin/*
