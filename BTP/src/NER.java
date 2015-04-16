@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.simple.JSONArray;
 
@@ -10,13 +11,15 @@ public class NER {
 	
 	static{
 		 String geolistFilename = "geolist.txt";
-		 geolist = new HashSet<String>();
+		 geolist = new TreeSet<String>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(geolistFilename));
 			String line;
 			while((line = br.readLine()) != null){
 				geolist.add(line.toLowerCase());
 			}
+			
+			System.out.println("geolist file read done");
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

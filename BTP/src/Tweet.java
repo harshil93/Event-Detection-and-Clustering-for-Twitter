@@ -14,6 +14,7 @@ public class Tweet {
 	private String tweet;
 	private ArrayList<String> hashtags;
 	private ArrayList<String> entities;
+	private ArrayList<String> locations;
 	private String assignedTopic;
 	public String getAssignedTopic() {
 		return assignedTopic;
@@ -81,6 +82,12 @@ public class Tweet {
 	}
 	public void addHashtags(String h) {
 		this.hashtags.add(h);
+	}
+	public ArrayList<String> getLocations() {
+		return locations;
+	}
+	public void setLocations(ArrayList<String> locations) {
+		this.locations = locations;
 	}
 	
 }

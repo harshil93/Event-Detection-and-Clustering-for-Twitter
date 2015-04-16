@@ -20,10 +20,10 @@ import org.json.simple.*;
 
 public class Testing {
 	// Change this a/c to your requirements
-	public final static String _nerInFile = "./TweetByTopics_25/tweetsForNER.out";
-	public final static int _numOfTopic = 25;
-	public final static String _tweetsFile= "./TweetByTopics_25/tweets";
-	public final static String _topicFolder = "./TweetByTopics_25/";
+	public final static String _nerInFile = "./TweetByTopics_50/tweetsForNER.out";
+	public final static int _numOfTopic = 50;
+	public final static String _tweetsFile= "./TweetByTopics_50/tweets";
+	public final static String _topicFolder = "./TweetByTopics_50/";
 	
 	public final static String _LLDAidfilePrefix = "LLDA.id.";
 	public final static String _LLDAwordfilePrefix = "LLDA.word.";
@@ -34,8 +34,7 @@ public class Testing {
 		
 		readFiles(_nerInFile,_tweetsFile,_topicFolder,_numOfTopic);
 		printTimeline();
-		createFileForLabelledLDA(_LLDAidfilePrefix,_LLDAwordfilePrefix, _LLDAentityfilePrefix);
-		
+		//createFileForLabelledLDA(_LLDAidfilePrefix,_LLDAwordfilePrefix, _LLDAentityfilePrefix);
 		
 	}
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map )
@@ -68,6 +67,7 @@ public class Testing {
 				}
 			}
 		}
+		p.close();
 	}
 	
 	private static Map<String, ArrayList<Integer>> getTopEntitySetForTweetSet(
@@ -231,20 +231,14 @@ public class Testing {
 			wordWriter.close();
 		}
 	}
-
 	private static JSONArray getJSONArray(String s){
 		Object Obj=JSONValue.parse(s);
 		JSONArray arr=(JSONArray)Obj;
 		return arr;
 	}
-	
-	
 	public static void readFiles(String nerInFile, String tweetsfile, String topicFolder, int numoftopic) throws FileNotFoundException {
 		BufferedReader nerReader = new BufferedReader(new FileReader(nerInFile));
 		BufferedReader tweetsReader = new BufferedReader(new FileReader(tweetsfile));
-		
-		
-		
 		String line;
 		try {
 			// read tweetsfile
@@ -271,12 +265,13 @@ public class Testing {
 					tweets.put(tweetId, tweetObj);
 				}
 			}
-			
+			System.out.println("Tweets file read");
 			// read tweetsfile
 			String id;
 			while((id = nerReader.readLine()) !=null){
 				
 				Integer tweetId = Integer.parseInt(id);
+				if(tweetId%1000 == 0) System.out.println(id);
 				String tweet = nerReader.readLine();
 				String tags = nerReader.readLine();
 				String pos = nerReader.readLine();
@@ -284,9 +279,10 @@ public class Testing {
 				Tweet tw = tweets.get(tweetId);
 				if(tw == null) continue;
 				ArrayList<String> arr1 = NER.extractEntities(getJSONArray(tweet), getJSONArray(tags));
-				ArrayList<String> arr2 = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
-				arr1.addAll(arr2);
+				///ArrayList<String> arr2 = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
+				//arr1.addAll(arr2);
 				
+				//tw.setLocations(arr2);			
 				tw.setEntities(arr1);	
 			}
 			for(int topicNum = 0; topicNum< numoftopic;topicNum++){
@@ -304,6 +300,7 @@ public class Testing {
 			
 			nerReader.close();
 			tweetsReader.close();
+			System.out.println("ner read completed");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
