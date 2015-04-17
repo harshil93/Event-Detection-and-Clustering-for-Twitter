@@ -20,23 +20,26 @@ import org.json.simple.*;
 
 public class Testing {
 	// Change this a/c to your requirements
-	public final static String _nerInFile = "./TweetByTopics_50/tweetsForNER.out";
-	public final static int _numOfTopic = 50;
-	public final static String _tweetsFile= "./TweetByTopics_50/tweets";
-	public final static String _topicFolder = "./TweetByTopics_50/";
-	
+	public final static String _nerInFile = "./TweetByTopics_25/tweetsForNER.out";
+	public final static int _numOfTopic = 25;
+	public final static String _tweetsFile= "./TweetByTopics_25/tweets";
+	public final static String _topicFolder = "./TweetByTopics_25/";
+	public final static Integer _timeQuantaForTimeline = 15;
 	public final static String _LLDAidfilePrefix = "LLDA.id.";
 	public final static String _LLDAwordfilePrefix = "LLDA.word.";
 	public final static String _LLDAentityfilePrefix = "LLDA.entity.";
 	static Map<Integer, Tweet> tweets = new HashMap<Integer, Tweet>();
 	static ArrayList< ArrayList<Integer> > topics = new ArrayList<ArrayList<Integer>>();
+	static Timeline timeline = new Timeline();
 	public static void main(String[] args) throws IOException{
 		
 		readFiles(_nerInFile,_tweetsFile,_topicFolder,_numOfTopic);
+		createTimeSegmentWithTfIdfRanking();
+		timeline.dumpTimeline("./output/timeline_tfidf_"+_numOfTopic, 10);
 		printTimeline();
 		//createFileForLabelledLDA(_LLDAidfilePrefix,_LLDAwordfilePrefix, _LLDAentityfilePrefix);
-		
 	}
+	
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map )
 	{
 	      Map<K,V> result = new LinkedHashMap<>();
@@ -49,13 +52,15 @@ public class Testing {
 	
 	public static void printTimeline() throws FileNotFoundException{
 		ArrayList< ArrayList<Tweet>> topicWiseTweets = getTopicWiseTweets(topics);
-		FileOutputStream fos = new FileOutputStream("timeline", false);
+		FileOutputStream fos = new FileOutputStream("./output/timeline_"+_numOfTopic, false);
 		PrintStream p = new PrintStream(fos);		
 		for(int topicNum = 0; topicNum< topics.size();topicNum++){
 			
 			ArrayList< ArrayList<Tweet>> paritionedTweets = Timeline.partition(topicWiseTweets.get(topicNum),15);
 			p.println("\n\nTopic No. "+topicNum);
+			
 			for (ArrayList<Tweet> arrayList : paritionedTweets) {
+				
 				if(arrayList.size()>1){
 					java.sql.Timestamp startingTime = arrayList.get(0).getTimestamp();
 					java.sql.Timestamp endingTime = arrayList.get(arrayList.size() - 1).getTimestamp();
@@ -70,6 +75,32 @@ public class Testing {
 		p.close();
 	}
 	
+	public static void createTimeSegmentWithTfIdfRanking() throws FileNotFoundException{
+		
+		ArrayList< ArrayList<Tweet>> topicWiseTweets = getTopicWiseTweets(topics);		
+		
+		for(int topicNum = 0; topicNum< topics.size();topicNum++){
+			System.out.println(topicNum);
+			ArrayList< ArrayList<Tweet>> paritionedTweets = Timeline.partition(topicWiseTweets.get(topicNum),_timeQuantaForTimeline);
+			
+			for (ArrayList<Tweet> arrayList : paritionedTweets) {
+				
+				if(arrayList.size()>1){
+					
+					java.sql.Timestamp startingTime = arrayList.get(0).getTimestamp();
+					java.sql.Timestamp endingTime = arrayList.get(arrayList.size() - 1).getTimestamp();
+					TimeSegment t = new TimeSegment();
+					t.setStartingTime(startingTime);
+					t.setEndingTime(endingTime);
+					t.setTweets(arrayList);
+					t.setTopicNum(topicNum);
+					timeline.addSegment(t);
+				}
+			}
+		}
+		timeline.calcTfIdf();
+		
+	}
 	private static Map<String, ArrayList<Integer>> getTopEntitySetForTweetSet(
 			ArrayList<Tweet> tweets,int topNum) {
 		HashMap<String,ArrayList<Integer>> entityWiseTweets = new HashMap<String, ArrayList<Integer>>();
@@ -294,12 +325,14 @@ public class Testing {
 				while((id = topicReader.readLine())!=null){
 					topics.get(topicNum).add(Integer.parseInt(id));
 				}
+				topicReader.close();
 			}
 			
 			
 			
 			nerReader.close();
 			tweetsReader.close();
+			
 			System.out.println("ner read completed");
 			
 		} catch (Exception e) {
@@ -311,3 +344,5 @@ public class Testing {
 	
 	
 }
+
+
