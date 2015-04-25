@@ -1,0 +1,9 @@
+\chapter{Problem Definition}
+
+Our overarching aim is to detect events using microblogs in social media (such as Twitter), track and model their evolution over time. Our focus is on the following two sub-problems.
+
+\section{Using LDA to detect events}
+The first step towards an attempt to extract useful information from Twitter data is to detect and extract real-world events from tweets. To this end, we are exploring Topic Models. In particular, we are using Latent Dirichlet Allocation \cite{blei2003latent}. LDA is a generative process used for inferring the topics present in a text corpora and classifying the documents according to these topics. Our aim is to use LDA on Twitter posts to cluster related posts across millions of tweets under different \emph{topics}. Topics when associated with spatial and temporal data along with the associated entities represent events instances. Our aim is to segregate the tweets within a high-level topic into different clusters where each cluster corresponds to an event instance. We aim to tackle the problem of event detection in a hierarchical 2-level fashion, where the top level represents high-level topics or event classes such as \textit{bomb blast}. The lower level corresponds to a set of tweet clusters, where each cluster representing an event. The advantage of this hierarchical approach over traditional one-layer approach is that further levels based on new attributes could be added to the pipeline to narrow down on event instances with more specificity.
+
+\section{Evolution of events}
+Once an event such as bomb blast, hurricane, and presidential speech have been identified through tweets, the next step is to track the evolution of these events over time. We are interested in investigating how they develop within their \emph{topic}, as well as analyzing how their correlation to events in other topics changes over time.

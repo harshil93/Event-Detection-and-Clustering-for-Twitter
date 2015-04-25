@@ -1,0 +1,58 @@
+\chapter{Observations and Results}
+
+
+\section{Twitter LDA}
+We compared the results of the normal LDA and the Twitter LDA and found that Twitter LDA is significantly better on the microblogs. As we analyzed our data for different no. of topics like 25, 50 and 100, we found that in reality a single topic was representing a lot of events over the timeline. For eg. the Topic 1 in \ref{table:twitterlda} also had events related to both American Idol and Britain's Got Talent. Some of the top keywords like vote,won,trending,talent are perfectly representing both the events. 
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ c c }
+Topic 1 & Topic 2 \\
+\hline
+vote & air	 \\
+won & france	 \\
+love & flight	 \\
+diversity &	plane	 \\
+susan & sad	 \\
+trending & mcflyforgermany	 \\
+boyle &	families	 \\
+talent & missing	
+\end{tabular}
+\caption{Twitter LDA - Topics' top keywords}
+\label{table:twitterlda}
+\end{table}
+
+We also found that there were some very general topics that were representatives of daily activities of the user and were found in the output of the Twitter LDA.
+
+\section{Entity Extraction and Time Segmentation}
+After getting the topics from the Twitter LDA, we segmented the tweets in topics based on time and extracted top entities for it. The results we got in terms of entities were found to be representing many events as predicted earlier.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ c c c }
+\hline
+Segment 1 & Segment 2 & Segment 3 \\
+\hline
+2009-04-06 - 2009-04-21& 2009-05-21 - 2009-06-05 & 2009-06-05 - 2009-06-20 \\
+\hline
+robert - 4 & shaun - 37  & ashley - 33  \\
+youtube - 5 & shaun smith - 40  & danny - 25  \\
+adam - 6 & danny - 40  & twitter - 169  \\
+twitter - 21 & adam - 80  & tom - 47  \\
+miley cyrus - 3 & twitter - 252  & peter - 35  \\
+jessica - 3 & kris allen - 69  & kate - 56  \\
+susan - 3 & susan - 90  & margaret - 71  \\
+adam lambert - 4 & adam lambert - 96  & adam lambert - 32  \\
+simon cowell - 3 & susan boyle - 484  & david - 38  \\
+susan boyle - 58 & mtv - 66  & teen choice awards - 60 \\	
+\end{tabular}
+\caption{Time segments of a topic with frequency of each entity in that segment}
+\label{table:timesegment}
+\end{table}
+
+
+The three sub-topic clusters shown in Table \ref{table:timesegment} are the three different segments taken from one of the top level topics that we got from topic models. 
+
+We manually searched for these keywords to find out about coherence of topical words. A/c to our observations, the first subclusters represents a amazing performance of Susan Boyle in Simon Cowell was the judge. Adam Lambert was another performer who did a phenomenal performance in American Idol 8. So we have two different events related to stage performance in a single time segment. To merge keywords, we have used the co-occurence of words as already described in \ref{section:cooccurence}
+
+The next two subclusters denote events that succeed the first one. One can easily see the relation between these subclusters based on keywords and this relation will be exploited by our Event Tracking Algorithm.

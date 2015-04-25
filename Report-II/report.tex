@@ -1,0 +1,159 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[a4paper, portrait, margin=1in]{geometry}
+\usepackage{amsthm,amssymb,mathrsfs,setspace, hyperref, amsmath}% latexsym,footmisc
+
+% \usepackage{pstcol}
+% \usepackage{play}
+\usepackage{epsfig}
+%\usepackage[grey,times]{quotchap}
+\usepackage[nottoc]{tocbibind}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+%
+
+\input xy
+\xyoption{all}
+
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{notation}[theorem]{Notation}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+
+
+\begin{document}
+
+%\pagenumbering{arabic} \setcounter{page}{1}
+
+% --------------- Title page -----------------------
+
+\begin{titlepage}
+\enlargethispage{3cm}
+
+\begin{center}
+
+% \vspace*{-1cm}
+
+\textbf{\Large Hierarchical Event Detection and Clustering in Micro-Blogs using Topic Models}
+
+\vspace*{3cm}
+
+ A Project Report Submitted \\
+for the Course \\[2cm]
+
+{\bf\Large\ CS499 Project ~II }\\
+
+\vspace*{2cm}
+
+{\large \emph{by}}\\[5pt]
+{\large\bf {Harshil Lodhi}}
+{\large (Roll No. 11010121)}\\
+{\large\bf {Nishant Yadav}}
+{\large (Roll No. 11010147)}\\
+{\large\bf {Shobhit Chaurasia}}
+{\large (Roll No. 11010179)}
+
+\vspace*{3cm}
+\includegraphics[height=2.5cm]{iitglogo}
+
+\vspace*{0.5cm}
+
+{\em\large to the}\\[10pt]
+{\bf\large DEPARTMENT OF COMPUTER SCIENCE \& ENGINEERING} \\[5pt]
+{\bf\large \mbox{INDIAN INSTITUTE OF TECHNOLOGY GUWAHATI}}\\[5pt]
+{\bf\large GUWAHATI - 781039, INDIA}\\[10pt]
+{\it\large April 2015}
+\end{center}
+
+\end{titlepage}
+
+\clearpage
+
+% --------------- Certificate page -----------------------
+\pagenumbering{roman} \setcounter{page}{2}
+\begin{center}
+{\Large{\bf{CERTIFICATE}}}
+\end{center}
+%\thispagestyle{empty}
+
+
+\noindent
+This is to certify that the work contained in this project report
+entitled ``{\bf Hierarchical Event Detection and Clustering in Micro-Blogs using Topic Models}" submitted
+by {\bf Harshil Lodhi} ({\bf Roll No.: 11010121}), {\bf Nishant Yadav} ({\bf Roll No.: 11010147}), and {\bf Shobhit Chaurasia} ({\bf Roll No.: 11010179}) to Department of Computer Science and Engineering, Indian Institute of Technology Guwahati
+towards the requirement of the course \textbf{CS499 Project~II}
+has been carried out by him/her under my
+supervision.
+
+\vspace{4cm}
+
+\noindent Guwahati - 781 039 \hfill (Dr. Sanasam Ranbir Singh)
+
+\noindent April 2015 \hfill Project Supervisor
+
+\clearpage
+
+% --------------- Abstract page -----------------------
+\begin{center}
+{\Large{\bf{ABSTRACT}}}
+\end{center}
+With the growth of social media, information sharing on micro-blogging platforms such as Twitter has exploded. This huge knowledge base can be leveraged to extract useful information such as real-world events. The dynamic nature of this corpus can be exploited to not only detect, but also model and track the evolution of events over time. The nature of the problem alludes to clustering of tweets based on abstract topics which could be zoomed in to pin-point specific event instances. With this intuition in mind, we have formulated the problem as an instance of Topic Modelling. In this thesis, we present our work on detection of event instances from Twitter data using Topic Models such as LDA. We define an \emph{event} as an abstract idea which has a topic, a temporal dimension, and a set of entities such as location, person, organization etc. associated with itWe have proposed a hierarchical 2-level pipeline for extracting event instances from Twitter data. The first level segregates the tweets into topic clusters where each cluster corresponds to some high-level topic. The tweets in a topic cluster are then segregated based on time. Since event instances are associated with a named entity like location, person etc., within each sub-cluster we extract the named entities and group the tweets based on these entities. Further, entity based post processing steps are applied such as merging of related entities to get final tweet groups. Each group then represents a set of tweets talking about a high level topic (such as \textit{bomb blast}) within a give time-frame having a specific set of entities, hence representing an event instance according to our definition of an \textit{event}. Further, with these event instances as nodes, we propose a simple graph formulation to model the tracking of events over different time-frames.
+
+\clearpage
+
+
+
+\tableofcontents
+\clearpage
+\listoffigures
+\listoftables
+
+
+\newpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% =========== Main chapters starts here. Type in separate files and include the filename here. ==
+% ============================
+
+\input chapter1.tex
+
+\input chapter2.tex
+
+\input chapter3.tex
+
+\input chapter4.tex
+
+\input chapter5.tex
+
+\input chapter6.tex
+
+\input chapter7.tex
+
+\input chapter8.tex
+
+\input chapter9.tex
+
+\input chapter10.tex
+
+%\nocite{golub} \nocite{gerla}\nocite{m1}\nocite{chang}
+
+\bibliographystyle{plain}
+\bibliography{bib.bib}
+
+\end{document}
+
