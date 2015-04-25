@@ -1,136 +1,347 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.sql.Timestamp;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.json.simple.*;
 
 // TODO - use location dictionary as well for location extractions http://www.geonames.org/about.html
 // TODO - see if extracting Nouns etc is necessary in addition Entities
+
 public class Testing {
-	public final static String inFile = "/home/shobhit/in";
-	public final static String outFile_geoLoc = "/home/shobhit/out_geoLoc.csv";
-	public final static String outFile_entities = "/home/shobhit/out_entities.csv";
+	// Change this a/c to your requirements
+	public final static String _nerInFile = "./TweetByTopics_25/tweetsForNER.out";
+	public final static int _numOfTopic = 25;
+	public final static String _tweetsFile= "./TweetByTopics_25/tweets";
+	public final static String _topicFolder = "./TweetByTopics_25/";
+	public final static Integer _timeQuantaForTimeline = 15;
+	public final static String _LLDAidfilePrefix = "LLDA.id.";
+	public final static String _LLDAwordfilePrefix = "LLDA.word.";
+	public final static String _LLDAentityfilePrefix = "LLDA.entity.";
+	static Map<Integer, Tweet> tweets = new HashMap<Integer, Tweet>();
+	static ArrayList< ArrayList<Integer> > topics = new ArrayList<ArrayList<Integer>>();
+	static Timeline timeline = new Timeline();
+	public static void main(String[] args) throws IOException{
+		
+		readFiles(_nerInFile,_tweetsFile,_topicFolder,_numOfTopic);
+		createTimeSegmentWithTfIdfRanking();
+		timeline.dumpTimeline("./output/timeline_tfidf_"+_numOfTopic, 10);
+		printTimeline();
+		//createFileForLabelledLDA(_LLDAidfilePrefix,_LLDAwordfilePrefix, _LLDAentityfilePrefix);
+	}
 	
-	public static void main(String[] args){
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map )
+	{
+	      Map<K,V> result = new LinkedHashMap<>();
+	     Stream <Entry<K,V>> st = map.entrySet().stream();
+	
+	     st.sorted(Comparator.comparing(e -> e.getValue()))
+	          .forEach(e ->result.put(e.getKey(),e.getValue()));
+	     return result;
+	}
+	
+	public static void printTimeline() throws FileNotFoundException{
+		ArrayList< ArrayList<Tweet>> topicWiseTweets = getTopicWiseTweets(topics);
+		FileOutputStream fos = new FileOutputStream("./output/timeline_"+_numOfTopic, false);
+		PrintStream p = new PrintStream(fos);		
+		for(int topicNum = 0; topicNum< topics.size();topicNum++){
+			
+			ArrayList< ArrayList<Tweet>> paritionedTweets = Timeline.partition(topicWiseTweets.get(topicNum),15);
+			p.println("\n\nTopic No. "+topicNum);
+			
+			for (ArrayList<Tweet> arrayList : paritionedTweets) {
+				
+				if(arrayList.size()>1){
+					java.sql.Timestamp startingTime = arrayList.get(0).getTimestamp();
+					java.sql.Timestamp endingTime = arrayList.get(arrayList.size() - 1).getTimestamp();
+					p.println("\n"+startingTime+" - "+endingTime);
+					Map<String,ArrayList<Integer>> entitySet = getTopEntitySetForTweetSet(arrayList,10);
+					for (Map.Entry<String, ArrayList<Integer>> entry : entitySet.entrySet()) {
+						p.print(entry.getKey()+" - "+entry.getValue().size()+" , ");
+					}					
+				}
+			}
+		}
+		p.close();
+	}
+	
+	public static void createTimeSegmentWithTfIdfRanking() throws FileNotFoundException{
 		
-//		readTweet(System.in);
-		process();
+		ArrayList< ArrayList<Tweet>> topicWiseTweets = getTopicWiseTweets(topics);		
 		
-//		List<String> tweets = new ArrayList<String>();
-//		tweets.add("I am going to #IITG tomorrow/today zup :) http://imgur.com");
-//		tweets.add("I am going to IITG day after tomorrow");
-//		
-//		System.out.println(TweetCleaner.clean(tweets.get(0)));
-		
-		
-//		DatabaseAPI.establishConnection();
-//		ArrayList<Tweet> tweets = new ArrayList<Tweet>();
-//		tweets = DatabaseAPI.extractUntaggedTweets();
-//		
-//		// for each tweet remove URL, tokenize the text and replace slangs
-//		for (Tweet tw : tweets) {
-//			String tweet = TweetCleaner.removeUrl(tw.getTweet());
-//			List<String> newToks = Twokenize.tokenizeRawTweetText(tweet);
-//			TweetCleaner.replaceSlangs(newToks);
-//			tweet = String.join(" ", newToks);
-//			tw.setTweet(tweet);
-//		}
-//		
-//		// before removing stopwords, we should first run twitter_nlp to extract
-//		// location mentions and other named entities. 
-//		
-//		
-//		// remove stopwords from tweets
-//		for (Tweet tw : tweets) {
-//			String tweet = TweetCleaner.removeUrl(tw.getTweet());
-//			List<String> newToks = Twokenize.tokenizeRawTweetText(tweet);
-//			newToks = TweetCleaner.removeStopWords(newToks);
-//			tweet = String.join(" ", newToks);
-//			tw.setTweet(tweet);
-//		}
-//		ArrayList<ArrayList<Tweet>> m = Timeline.partition(tweets,1);
+		for(int topicNum = 0; topicNum< topics.size();topicNum++){
+			System.out.println(topicNum);
+			ArrayList< ArrayList<Tweet>> paritionedTweets = Timeline.partition(topicWiseTweets.get(topicNum),_timeQuantaForTimeline);
+			
+			for (ArrayList<Tweet> arrayList : paritionedTweets) {
+				
+				if(arrayList.size()>1){
+					
+					java.sql.Timestamp startingTime = arrayList.get(0).getTimestamp();
+					java.sql.Timestamp endingTime = arrayList.get(arrayList.size() - 1).getTimestamp();
+					TimeSegment t = new TimeSegment();
+					t.setStartingTime(startingTime);
+					t.setEndingTime(endingTime);
+					t.setTweets(arrayList);
+					t.setTopicNum(topicNum);
+					timeline.addSegment(t);
+				}
+			}
+		}
+		timeline.calcTfIdf();
 		
 	}
-
+	private static Map<String, ArrayList<Integer>> getTopEntitySetForTweetSet(
+			ArrayList<Tweet> tweets,int topNum) {
+		HashMap<String,ArrayList<Integer>> entityWiseTweets = new HashMap<String, ArrayList<Integer>>();
+		for (int i = 0; i < tweets.size(); i++) {
+			
+			Tweet tw = tweets.get(i);
+			ArrayList<String> entities = tw.getEntities();
+			
+			if(entities == null){
+				continue;
+			}
+						
+			for (int j = 0; j < entities.size(); j++) {
+				String currentEntity = entities.get(j);
+				
+				if(entityWiseTweets.containsKey(currentEntity)){
+					entityWiseTweets.get(currentEntity).add(tw.getTweetID());
+				}else{
+					entityWiseTweets.put(currentEntity,new ArrayList<Integer>());
+					entityWiseTweets.get(currentEntity).add(tw.getTweetID());
+				}
+			}
+			
+		}
+		
+		// Sorting the entities by the number of tweets in which they are present
+		Map<String, Integer> entitiesCount = new HashMap<String, Integer>();
+		for (Map.Entry<String, ArrayList<Integer>> entry : entityWiseTweets.entrySet()) {
+			entitiesCount.put(entry.getKey(), entry.getValue().size());
+		}
+		
+		Map<String, Integer>  sortEntitiesCount = sortByValue(entitiesCount);
+		
+		int entityNum = 0;
+		int size = sortEntitiesCount.size();
+		Map<String, ArrayList<Integer>>  retVal = new HashMap<String, ArrayList<Integer>>();
+		for (Map.Entry<String, Integer> dentry: sortEntitiesCount.entrySet()) {
+			entityNum++;
+			if(entityNum>size-topNum){
+				ArrayList<Integer> temp = entityWiseTweets.get(dentry.getKey());
+				retVal.put(dentry.getKey(), temp);
+			}
+		}
+		return retVal;
+	}
+	private static ArrayList<ArrayList<Tweet>> getTopicWiseTweets(
+			ArrayList<ArrayList<Integer>> topics2) {
+		ArrayList<ArrayList<Tweet>> topicWiseTweets = new ArrayList<ArrayList<Tweet>>();
+		
+		for(int topicNum = 0; topicNum< topics.size();topicNum++){
+			ArrayList<Tweet> curTopicTweets = new ArrayList<Tweet>();
+			for(Integer i: topics.get(topicNum)){
+				Tweet tw = tweets.get(i);
+				if(tw!=null)
+					curTopicTweets.add(tweets.get(i));
+			}
+			topicWiseTweets.add(curTopicTweets);
+		}
+		return topicWiseTweets;
+	}
+	private static void createFileForLabelledLDA(String lldaidfileprefix,String lldawordfileprefix,String lldaentityfileprefix) throws IOException {
+		
+		for(int topicNum = 0; topicNum< topics.size();topicNum++){
+			System.out.println("createFileForLabelledLDA"+" "+topicNum);
+			HashMap<String,ArrayList<Integer>> entityWiseTweets = new HashMap<String, ArrayList<Integer>>();
+			
+			ArrayList<Integer> topic  = topics.get(topicNum);
+			File file = new File(_topicFolder+lldaidfileprefix+topicNum);
+            BufferedWriter idWriter = new BufferedWriter(new FileWriter(file));
+            
+            
+            File file1 = new File(_topicFolder+lldaentityfileprefix+topicNum);
+            BufferedWriter entityIntWriter = new BufferedWriter(new FileWriter(file1));
+            
+            File file2 = new File(_topicFolder+lldawordfileprefix+topicNum);
+            BufferedWriter wordWriter = new BufferedWriter(new FileWriter(file2));
+            Set<Integer> tweetsDone = new HashSet<Integer>();
+            
+			for (int i = 0; i < topic.size(); i++) {
+				
+				Tweet tw = tweets.get(topic.get(i));
+				ArrayList<String> entities = tw.getEntities();
+				
+				if(entities == null){
+					continue;
+				}
+				
+				if(entities.size()>0){
+					tweetsDone.add(tw.getTweetID());
+				}
+				
+				for (int j = 0; j < entities.size(); j++) {
+					String currentEntity = entities.get(j);
+					
+					if(entityWiseTweets.containsKey(currentEntity)){
+						entityWiseTweets.get(currentEntity).add(tw.getTweetID());
+					}else{
+						entityWiseTweets.put(currentEntity,new ArrayList<Integer>());
+						entityWiseTweets.get(currentEntity).add(tw.getTweetID());
+					}
+				}
+			}
+			
+			// Sorting the entities by the number of tweets in which they are present
+			Map<String, Integer> entitiesCount = new HashMap<String, Integer>();
+			for (Map.Entry<String, ArrayList<Integer>> entry : entityWiseTweets.entrySet()) {
+				entitiesCount.put(entry.getKey(), entry.getValue().size());
+			}
+			
+			Map<String, Integer>  sortEntitiesCount = sortByValue(entitiesCount);
+						
+			int entityNum = 0;
+			
+			for (Map.Entry<String, Integer> dentry: sortEntitiesCount.entrySet()) {
+			    String key = dentry.getKey();
+			    ArrayList<Integer> value = entityWiseTweets.get(dentry.getKey());
+			    
+			    try {
+			    	
+			    	entityIntWriter.write(entityNum+" "+key);
+		            idWriter.write("["+entityNum+"] ");
+		            wordWriter.write("["+entityNum+"] ");
+		            
+		            for (int i = 0; i < value.size(); i++) {
+		            	idWriter.write(value.get(i)+" ");
+		            	wordWriter.write(tweets.get(value.get(i)).getTweet()+" ");
+					}
+		           
+		        } catch ( IOException e ) {
+		            e.printStackTrace();
+		        }
+			    idWriter.write("\n");
+			    wordWriter.write("\n");
+			    entityIntWriter.write("\n");
+			    entityNum++;
+			}
+			
+			// Writing to id file
+			idWriter.write("[ ");
+			wordWriter.write("[ ");
+			for(int i=0;i<entityNum;i++){
+				idWriter.write(i+" ");
+				wordWriter.write(i+" ");
+			}
+			idWriter.write("] ");
+			wordWriter.write("] ");
+			for (int i = 0; i < topic.size(); i++) {
+				if(!tweetsDone.contains(topic.get(i) )){
+					idWriter.write(topic.get(i)+" ");
+					wordWriter.write(tweets.get(topic.get(i)).getTweet()+" ");
+				}
+			}
+			
+			
+			
+			
+			idWriter.close();
+			entityIntWriter.close();
+			wordWriter.close();
+		}
+	}
 	private static JSONArray getJSONArray(String s){
 		Object Obj=JSONValue.parse(s);
 		JSONArray arr=(JSONArray)Obj;
 		return arr;
 	}
-	
-	// read tweets+tag lists from file, write entities+geoLocs to file
-	public static void process() {
-		BufferedReader r = null;
-		BufferedWriter w1 = null;	
-		BufferedWriter w2 = null;
-//		String tweet;
-		String sid;
-		ArrayList<String> geoLoc = new ArrayList<String>();
-		ArrayList<String> entities = new ArrayList<String>();
+	public static void readFiles(String nerInFile, String tweetsfile, String topicFolder, int numoftopic) throws FileNotFoundException {
+		BufferedReader nerReader = new BufferedReader(new FileReader(nerInFile));
+		BufferedReader tweetsReader = new BufferedReader(new FileReader(tweetsfile));
+		String line;
 		try {
-			r = new BufferedReader(new FileReader(inFile));
-			w1 = new BufferedWriter(new FileWriter(outFile_geoLoc));
-			w2 = new BufferedWriter(new FileWriter(outFile_entities));
-			while ((sid = r.readLine()) != null) {
-				String tweet = r.readLine();
-//				int id = Integer.parseInt(sid);
-				String tags = r.readLine();
-				String pos = r.readLine();
-				String events = r.readLine();
-				
-				geoLoc = NER.extractEntities(getJSONArray(tweet), getJSONArray(tags));
-				entities = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
-				
-				if(geoLoc.size()>=1 || entities.size()>=1)
-				{
-					w2.write(sid);
-//					w2.newLine();
-					for (String e : geoLoc) {
-						w2.write(",\""+e.toLowerCase()+"\"");
+			// read tweetsfile
+			while((line = tweetsReader.readLine()) !=null){
+				String[] tweetArr = line.split("\t");
+				if(tweetArr.length>2){
+					String tweet="";
+					for(int i = 1;i<tweetArr.length;i++){
+						tweet += tweetArr[i]+" ";
 					}
-//					w1.newLine();
 					
-					for (String e : entities) {
-						w2.write(",\""+e.toLowerCase()+"\"");
-					}
-					w2.newLine();
+					
+					Integer tweetId = Integer.parseInt(tweetArr[0]);
+					java.sql.Timestamp datetime = java.sql.Timestamp.valueOf(tweetArr[1]);
+					Tweet tweetObj = new Tweet();
+					tweetObj.setTweetID(tweetId);
+					tweetObj.setTweet(tweet);
+					if(datetime != null)
+						tweetObj.setTimestamp(datetime);
+					else
+						tweetObj.setTimestamp(new Timestamp(0));
+					
+					
+					tweets.put(tweetId, tweetObj);
 				}
+			}
+			System.out.println("Tweets file read");
+			// read tweetsfile
+			String id;
+			while((id = nerReader.readLine()) !=null){
 				
-
+				Integer tweetId = Integer.parseInt(id);
+				if(tweetId%1000 == 0) System.out.println(id);
+				String tweet = nerReader.readLine();
+				String tags = nerReader.readLine();
+				String pos = nerReader.readLine();
+				String events = nerReader.readLine();
+				Tweet tw = tweets.get(tweetId);
+				if(tw == null) continue;
+				ArrayList<String> arr1 = NER.extractEntities(getJSONArray(tweet), getJSONArray(tags));
+				///ArrayList<String> arr2 = NER.extractLocations(getJSONArray(tweet), getJSONArray(tags));
+				//arr1.addAll(arr2);
+				
+				//tw.setLocations(arr2);			
+				tw.setEntities(arr1);	
 			}
-		} catch (IOException e) {
+			for(int topicNum = 0; topicNum< numoftopic;topicNum++){
+				topics.add(new ArrayList<Integer>());
+			}
+			
+			for(int topicNum = 0; topicNum< numoftopic;topicNum++){
+				BufferedReader topicReader = new BufferedReader(new FileReader(topicFolder+topicNum));
+				while((id = topicReader.readLine())!=null){
+					topics.get(topicNum).add(Integer.parseInt(id));
+				}
+				topicReader.close();
+			}
+			
+			
+			
+			nerReader.close();
+			tweetsReader.close();
+			
+			System.out.println("ner read completed");
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Error in File I/O");
-		} finally {
-			try {
-				r.close();
-				w1.close();
-				w2.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
-	}
-	
-	
-	public static void readTweet(InputStream in){
-		Scanner sc = new Scanner(in);
-		String tweet = sc.nextLine();
-		String tags = sc.nextLine();
-		String pos = sc.nextLine();
-		String events = sc.nextLine();
 		
-		System.out.println(NER.extractEntities(getJSONArray(tweet), getJSONArray(tags)));
-		System.out.println(NER.extractLocations(getJSONArray(tweet), getJSONArray(tags)));
-		sc.close();
+		
 	}
-	
-	
 	
 	
 }
+

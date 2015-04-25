@@ -9,3 +9,11 @@ stanford-corenlp/*
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 geolist.txt
+TweetByTopics_25/*
+TweetByTopics_50/*
+TweetByTopics_Test/*
+twitter_bakcup.sql
+bin/*
+output/*
+geolist1.txt
+geolist2.txt

@@ -1,12 +1,38 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.simple.JSONArray;
 
 public class NER {
-
-	public static ArrayList<String> extractLocations(JSONArray tweet,JSONArray tags){
-			ArrayList<String> locs= new ArrayList<String>();
+	static Set<String> geolist;
+	
+	static{
+		 String geolistFilename = "geolist.txt";
+		 geolist = new TreeSet<String>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(geolistFilename));
+			String line;
+			while((line = br.readLine()) != null){
+				geolist.add(line.toLowerCase());
+			}
+			
+			System.out.println("geolist file read done");
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static ArrayList<String> extractLocations(JSONArray tweet,JSONArray tags){		
+			HashSet<String> locs = new HashSet<String>();
+			
 			for (int i = 0; i < tweet.size(); i++) {
 				String temp = tags.get(i).toString().trim();
 				if( temp.equals("B-geo-loc")){
@@ -20,11 +46,18 @@ public class NER {
 							break;
 						}
 					}
-					locs.add(location);
+					locs.add(location.toLowerCase());
+					continue;
+				}
+				
+				if(geolist.contains(tweet.get(i).toString().toLowerCase())){
+					locs.add(tweet.get(i).toString().toLowerCase());
 				}
 			}
-			return locs;
+						
+			return new ArrayList<String>(locs);
 		}
+	
 	public static ArrayList<String> extractEntities(JSONArray tweet,JSONArray tags){
 		ArrayList<String> entities= new ArrayList<String>();
 		for (int i = 0; i < tweet.size(); i++) {

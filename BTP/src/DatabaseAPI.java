@@ -13,7 +13,7 @@ public class DatabaseAPI {
 
 	//  Database credentials
 	static final String USER = "root";
-	static final String PASS = "root";
+	static final String PASS = "peace";
 	static private Connection conn;
 	
 	public static void establishConnection() {
@@ -63,7 +63,7 @@ public class DatabaseAPI {
 				tweet.setTweetID(rs.getInt("tweetid"));
 //				tweet.setAnon1(rs.getInt("anon1"));
 //				tweet.setAnon2(rs.getInt("anon2"));
-//				tweet.setTimestamp(rs.getTimestamp("timestamp"));
+				tweet.setTimestamp(rs.getTimestamp("timestamp"));
 //				tweet.setLabel(rs.getString("label"));
 //				tweet.setUsername(rs.getString("username"));
 				tweet.setTweet(rs.getString("tweet"));					
@@ -189,9 +189,9 @@ public class DatabaseAPI {
 		untaggedTweets = extractUntaggedTweets();
 		BufferedWriter w = null;
 		try {
-			w = new BufferedWriter(new FileWriter("out"));
+			w = new BufferedWriter(new FileWriter("tweets"));
 			for (Tweet t : untaggedTweets) {
-				w.write(t.getTweetID()+"\t"+t.getTweet());
+				w.write(t.getTweetID()+"\t"+t.getTimestamp()+"\t"+t.getTweet());
 				w.newLine();
 			}
 		} catch (IOException e) {
@@ -203,7 +203,7 @@ public class DatabaseAPI {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}	
 		}
 	}
 	   	
