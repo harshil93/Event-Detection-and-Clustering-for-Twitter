@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 public  class TweetCleaner {
 	private static Map<String, String> slangDict;
 	private static Set<String> stopWords;
-	private static String inTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/in.txt";
-	private static String outTweetsFile = "/home/shobhit/btp/dataset/twitter_small/original/out.txt";
+	private static String inTweetsFile = "/home/harshil/BTP/BTP-git/BTP/TweetByTopics_Test/tweets";
+	private static String outTweetsFile = "/home/harshil/BTP/BTP-git/BTP/TweetByTopics_Test/tweets.cleaned.without.stopwords";
 	static Pattern p;
 	static{
 		// Filenames are important
@@ -79,7 +79,7 @@ public  class TweetCleaner {
 		String tweet = removeUrl(tw.getTweet());
 		List<String> newToks = Twokenize.tokenizeRawTweetText(tweet);
 		replaceSlangs(newToks);
-		newToks = removeStopWords(newToks);
+		//newToks = removeStopWords(newToks);
 		tweet = String.join(" ", newToks);
 		tw.setTweet(tweet);
 	}
@@ -115,10 +115,9 @@ public  class TweetCleaner {
 			r = new BufferedReader(new FileReader(inTweetsFile));
 			w = new BufferedWriter(new FileWriter(outTweetsFile));
 			while ((line = r.readLine()) != null) {
-//				String[] tokens = line.split(",");
-//				tokens[5] = clean(tokens[5]);
-				line = clean(line);
-				w.write(line);
+				String[] tokens = line.split("\t");
+				line = clean(tokens[2]);
+				w.write(tokens[0]+"\t"+tokens[1]+"\t"+line);
 				w.newLine();
 			}
 		} catch (IOException e) {

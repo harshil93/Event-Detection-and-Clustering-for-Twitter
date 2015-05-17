@@ -20,10 +20,10 @@ import org.json.simple.*;
 
 public class Testing {
 	// Change this a/c to your requirements
-	public final static String _nerInFile = "./TweetByTopics_25/tweetsForNER.out";
-	public final static int _numOfTopic = 25;
-	public final static String _tweetsFile= "./TweetByTopics_25/tweets";
-	public final static String _topicFolder = "./TweetByTopics_25/";
+	public final static String _nerInFile = "./TweetByTopic_4_ord/tweetsForNER.out";
+	public final static int _numOfTopic = 4;
+	public final static String _tweetsFile= "./TweetByTopic_4_ord/tweets";
+	public final static String _topicFolder = "./TweetByTopic_4_ord/";
 	public final static Integer _timeQuantaForTimeline = 15;
 	public final static String _LLDAidfilePrefix = "LLDA.id.";
 	public final static String _LLDAwordfilePrefix = "LLDA.word.";
@@ -35,7 +35,7 @@ public class Testing {
 		
 		readFiles(_nerInFile,_tweetsFile,_topicFolder,_numOfTopic);
 		createTimeSegmentWithTfIdfRanking();
-		timeline.dumpTimeline("./output/timeline_tfidf_"+_numOfTopic, 10);
+		timeline.dumpTimeline("./output/timeline_tfidf_"+_numOfTopic, 15);
 		printTimeline();
 		//createFileForLabelledLDA(_LLDAidfilePrefix,_LLDAwordfilePrefix, _LLDAentityfilePrefix);
 	}

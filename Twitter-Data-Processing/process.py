@@ -166,7 +166,7 @@ def generateAggregatedTweetsFilesFromHashTags_id(filename):
 		except Exception, e:
 			continue
 	f.close()
-groupTweetsByTopicTwitterLDA("/home/shobhit/btp/results/TwitterLDA_50/TextWithLabel", "./TweetByTopics_50", "filelist", 50)
+groupTweetsByTopicTwitterLDA("/home/harshil/BTP/BTP-git/Twitter-LDA/data/ModelRes_4Topics_rnd/test/TextWithLabel/", "/home/harshil/BTP/BTP-git/BTP/TweetByTopic_4_rnd/", "/home/harshil/BTP/BTP-git/Twitter-LDA/data/filelist_test.txt", 4)
 # generateAggregatedTweetsFilesFromHashTags_id('../../dataset/twitter_small/original/out_id_clean')
 #generateAggregatedTweetsFiles('./Dataset/testdata.csv')
 # processCsv("../../dataset/twitter_small/stopWordRemoved/training.csv.stopWordRemoved")
